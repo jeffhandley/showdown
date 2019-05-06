@@ -5,6 +5,10 @@
 showdown.subParser('makehtml.blockGamut', function (text, options, globals) {
   'use strict';
 
+  if (!options.multiline) {
+    return text;
+  }
+
   text = globals.converter._dispatch('makehtml.blockGamut.before', text, options, globals).getText();
 
   // we parse blockquotes first so that we can have headings and hrs

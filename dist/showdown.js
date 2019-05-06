@@ -1,4 +1,4 @@
-;/*! showdown v 2.0.0-alpha1 - 24-10-2018 */
+;/*! showdown v 2.0.0-alpha1 - 05-05-2019 */
 (function(){
 /**
  * Created by Tivie on 13-07-2015.
@@ -161,6 +161,11 @@ function getDefaultOpts (simple) {
     splitAdjacentBlockquotes: {
       defaultValue: false,
       description: 'Split adjacent blockquote blocks',
+      type: 'boolean'
+    },
+    multiline: {
+      defaultValue: true,
+      description: 'Enable multiline block parsing',
       type: 'boolean'
     }
   };
@@ -2263,6 +2268,10 @@ showdown.helper.emojis = {
 showdown.subParser('makehtml.blockGamut', function (text, options, globals) {
   'use strict';
 
+  if (!options.multiline) {
+    return text;
+  }
+
   text = globals.converter._dispatch('makehtml.blockGamut.before', text, options, globals).getText();
 
   // we parse blockquotes first so that we can have headings and hrs
@@ -2530,8 +2539,9 @@ showdown.subParser('makehtml.ellipsis', function (text, options, globals) {
 });
 
 /**
- * These are all the transformations that occur *within* block-level
- * tags like paragraphs, headers, and list items.
+ * Turn emoji codes into emojis
+ *
+ * List of supported emojis: https://github.com/showdownjs/showdown/wiki/Emojis
  */
 showdown.subParser('makehtml.emoji', function (text, options, globals) {
   'use strict';
@@ -4374,6 +4384,12 @@ showdown.subParser('makeMarkdown.blockquote', function (node, globals) {
   return txt;
 });
 
+showdown.subParser('makeMarkdown.break', function () {
+  'use strict';
+
+  return '  \n';
+});
+
 showdown.subParser('makeMarkdown.codeBlock', function (node, globals) {
   'use strict';
 
@@ -4635,6 +4651,10 @@ showdown.subParser('makeMarkdown.node', function (node, globals, spansOnly) {
 
     case 'img':
       txt = showdown.subParser('makeMarkdown.image')(node, globals);
+      break;
+
+    case 'br':
+      txt = showdown.subParser('makeMarkdown.break')(node, globals);
       break;
 
     default:

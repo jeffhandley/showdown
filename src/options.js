@@ -160,6 +160,11 @@ function getDefaultOpts (simple) {
       defaultValue: false,
       description: 'Split adjacent blockquote blocks',
       type: 'boolean'
+    },
+    multiline: {
+      defaultValue: true,
+      description: 'Enable multiline block parsing',
+      type: 'boolean'
     }
   };
   if (simple === false) {
